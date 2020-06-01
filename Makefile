@@ -12,13 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-IMAGE_REPOSITORY   := eu.gcr.io/gardener-project/gardener/machine-controller-manager
+IMAGE_REPOSITORY   := voigt/machine-controller-manager
 IMAGE_TAG          := $(shell cat VERSION)
 COVERPROFILE       := test/output/coverprofile.out
 
 CONTROL_NAMESPACE  := default
 CONTROL_KUBECONFIG := dev/target-kubeconfig.yaml
 TARGET_KUBECONFIG  := dev/target-kubeconfig.yaml
+
+GOARCH := amd64
+
+.PHONY: rim
+rim:
+	@echo "> "$(GOARCH)
 
 #########################################
 # Rules for local development scenarios #
@@ -66,7 +72,8 @@ release: build build-local docker-image docker-login docker-push rename-binaries
 
 .PHONY: docker-image
 docker-images:
-	@docker build -t $(IMAGE_REPOSITORY):$(IMAGE_TAG) --rm .
+	@docker buildx build --platform linux/arm64 --build-arg ARCH=$(GOARCH) -t $(IMAGE_REPOSITORY):$(IMAGE_TAG)-$(GOARCH) --rm .
+	#@docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 --build-arg ARCH=$(GOARCH) -t $(IMAGE_REPOSITORY):$(IMAGE_TAG)-$(GOARCH) --rm .
 
 .PHONY: docker-login
 docker-login:

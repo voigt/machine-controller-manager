@@ -1,10 +1,15 @@
 # Sample deployment file, used to run Machine Controller Manager on your cluster
 
-apiVersion: apps/v1beta1 # Version may change based on kubernetes version
+apiVersion: apps/v1 # Version may change based on kubernetes version
 kind: Deployment
 metadata:
   name: machine-controller-manager
+  labels:
+    app: machine-controller-manager
 spec:
+  selector:
+    matchLabels:
+      app: machine-controller-manager
   replicas: 1
   template:
     metadata:
@@ -13,7 +18,7 @@ spec:
     spec:
       containers:
       - name: machine-controller-manager
-        image: eu.gcr.io/gardener-project/gardener/machine-controller-manager:0.5.0
+        image: voigt/machine-controller-manager:v0.29.0-arm64
         imagePullPolicy: Always
         command:
           - ./machine-controller-manager

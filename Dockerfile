@@ -1,10 +1,12 @@
 #############      builder                                  #############
 FROM golang:1.13.5 AS builder
 
+ARG ARCH=amd64
+
 WORKDIR /go/src/github.com/gardener/machine-controller-manager
 COPY . .
 
-RUN .ci/build
+RUN env GOARCH=${ARCH} .ci/build
 
 #############      base                                     #############
 FROM alpine:3.11.2 as base
